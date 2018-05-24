@@ -54,7 +54,7 @@ class LoginController(Observe):
         from main import Control
         self.args = args
         if len(self.args) == 0:
-            self.event = 0
+            self.event = ()
         else:
             self.event = self.args
         self.n = Control().check(self.event)
