@@ -46,7 +46,7 @@ class LoginController(Observe):
         if type(self.user)== str:
             return "error"
         self.event = Logining.privelege(self.user)
-        self.update(self.event, self.user[0])
+        self.update(self.event, self.user)
         return self.user
 
     def update(self, *args):
@@ -54,7 +54,7 @@ class LoginController(Observe):
         from main import Control
         self.args = args
         if len(self.args) == 0:
-            self.event = 0
+            self.event = ()
         else:
             self.event = self.args
         self.n = Control().check(self.event)

@@ -24,7 +24,6 @@ class Gardener(QMainWindow):
         self.b = self.parametr()
         self.table = self.ui.TableView
         self.table.clear()
-        print(self.b)
         self.row = len(self.b)
         self.cols = len(self.b[0])
         self.table.setColumnCount(self.cols)
@@ -51,9 +50,10 @@ class Gardener(QMainWindow):
 
 
 class Casher(QMainWindow):
-    def __init__(self):
+    def __init__(self, user_id):
         super(Casher, self).__init__()
-        self.wind()
+        self.user_id = user_id
+        # self.wind()
     def wind(self):
         from Casher.View.Casher_main import Ui_MainWindow
         self.ui = Ui_MainWindow()
@@ -61,7 +61,8 @@ class Casher(QMainWindow):
 
 
 class Director(QMainWindow):
-    def __init__(self):
+    def __init__(self, user_id):
+        self.user_id = user_id
         super(Director, self).__init__()
         self.wind()
     def wind(self):
@@ -70,7 +71,8 @@ class Director(QMainWindow):
         self.ui.setupUi(self)
 
 class Accountant(QMainWindow):
-    def __init__(self):
+    def __init__(self, user_id):
+        self.user_id = user_id
         super(Accountant, self).__init__()
         self.wind()
     def wind(self):
@@ -79,7 +81,8 @@ class Accountant(QMainWindow):
         self.ui.setupUi(self)
 
 class HiredWorker(QMainWindow):
-    def __init__(self):
+    def __init__(self, user_id):
+        self.user_id = user_id
         super(HiredWorker, self).__init__()
         self.wind()
     def wind(self):
@@ -99,24 +102,29 @@ class Control:
         from Observer import Windows
         self.win = Windows()
         self.login = login()
+        print(self.event)
         if len(self.event) != 0:
             
-            if self.event[0] == 0:
-                self.main_window = Gardener(self.event[1])
+            if self.event[0][0] == 0:
+                self.main_window = Gardener(self.event[0][1])
+                self.win.run(self.main_window)
                 
-            elif self.event[0] == 1:
-                self.main_window = Casher(self.event[1])
+            elif self.event[0][0] == 1:
+                self.main_window = Casher(self.event[0][1])
+                self.win.run(self.main_window)
                 
-            elif self.event[0] == 2:
-                self.main_window = Director(self.event[1])
+            elif self.event[0][0] == 2:
+                self.main_window = Director(self.event[0][1])
+                self.win.run(self.main_window)
             
-            elif self.event[0] == 3:
-                self.main_window = Accountant(self.event[1])
+            elif self.event[0][0] == 3:
+                self.main_window = Accountant(self.event[0][1])
+                self.win.run(self.main_window)
             
-            elif self.event[0] == 4:
-                self.main_window = HiredWorker(self.event[1])
+            elif self.event[0][0] == 4:
+                self.main_window = HiredWorker(self.event[0][1])
             
-            self.win.run(self.main_window)
+                self.win.run(self.main_window)
         
         else:
             
@@ -129,7 +137,7 @@ if __name__ == '__main__':
     de = create_debug_engine(True)
     session = create_session(de)
     app = QApplication(sys.argv)
-    # w = Control.check()
-    w = Gardener("1")
-    w.show()
+    w = Control.check()
+    # w = Gardener("1")
+    # w.show()
     app.exec_()

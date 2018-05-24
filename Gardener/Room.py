@@ -11,4 +11,3 @@ class Room_main(QDialog):
 		super(Room_main, self).__init__()
 		self.ui = Ui_Dialog()
 		self.ui.setupUi(self)
-		self.ui.buttonbox.connect
