@@ -8,6 +8,11 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+class Labels(object):
+    def __init__(self, name):
+        self.name = name
+
+
 class Counter(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
@@ -23,14 +28,6 @@ class Counter(object):
         self.widget = QtWidgets.QWidget(Dialog)
         self.widget.setGeometry(QtCore.QRect(30, 70, 441, 41))
         self.widget.setObjectName("widget")
-        self.label_2 = QtWidgets.QLabel(self.widget)
-        self.label_2.setGeometry(QtCore.QRect(10, 10, 211, 17))
-        self.label_2.setObjectName("label_2")
-        self.doubleSpinBox = QtWidgets.QDoubleSpinBox(self.widget)
-        self.doubleSpinBox.setGeometry(QtCore.QRect(230, 10, 211, 27))
-        self.doubleSpinBox.setMaximum(9999999999.99)
-        self.doubleSpinBox.setObjectName("doubleSpinBox")
-
         self.retranslateUi(Dialog)
         self.buttonBox.accepted.connect(Dialog.accept)
         self.buttonBox.rejected.connect(Dialog.reject)
@@ -42,3 +39,25 @@ class Counter(object):
         self.label.setText(_translate("Dialog", "Введите данные приборов учета"))
         self.label_2.setText(_translate("Dialog", "Наименование"))
 
+    def countView(self, *args):
+        self.args = args
+        if len(self.args) == 0:
+
+            self.label_2 = QtWidgets.QLabel(self.widget)
+            self.label_2.setGeometry(QtCore.QRect(10, 10, 211, 17))
+            self.label_2.setObjectName("label_2")
+            self.label_2.setText("У вас нет счетчиков!!!!!")
+
+        else:
+            self.labels = {}
+            self.spins = {}
+            for self.i in range(len(self.args)):                
+                self.name = QtWidgets.QLabel(self.widget)
+                self.name.setGeometry(QtCore.QRect(10, 10, 211, 17))
+                self.name.setObjectName("name")
+                self.labels[self.i]=Labels(self.name)
+                self.doubleSpinBox = QtWidgets.QDoubleSpinBox(self.widget)
+                self.doubleSpinBox.setGeometry(QtCore.QRect(230, 10, 211, 27))
+                self.doubleSpinBox.setMaximum(9999999999.99)
+                self.doubleSpinBox.setObjectName("doubleSpinBox")
+                self.spins[self.i]=Labels(self.doubleSpinBox)

@@ -4,27 +4,41 @@ from PyQt5.QtWidgets import QApplication, QMainWindow
 import os
 import codecs
 from Login.ControllerLog import login
-
+from Gardener.View.Garden_main import Ui_MainWindow
 
         
 class Gardener(QMainWindow):
+    def get_id(self):
+        return self.user_id
+
+    model = property(get_id)
+
     def __init__(self, user_id):
         super(Gardener, self).__init__()
         self.user_id = user_id
-        self.wind()
-    def wind(self):
-        from Gardener.View.Garden_main import Ui_MainWindow
         self.ui = Ui_MainWindow()
-        self.smth = self.ui.setupUi(self)
-        self.ui.enter.pressed.connect(self.button)
-        self.ui.action_2.triggered.connect(self.room)
-        self.ui.action_3.triggered.connect(self.count)
+        self.ui.setupUi(self)
+        self.controller = Garden_Controller(self)
+
+
+
+class Garden_Controller:
+    def __init__(self, view):
+        self.user_id = view.model
+        self.view = view
+        ui = view.ui
+        user_id = view.model
+
+        ui.enter.pressed.connect(self.button)
+        ui.action_2.triggered.connect(self.room)
+        ui.action_3.triggered.connect(self.count)
     def button(self):
         from PyQt5.QtWidgets import QTableWidgetItem
         self.b = self.parametr()
-        self.table = self.ui.TableView
+        if len(self.b) == 0:
+            return 0
+        self.table = self.view.ui.TableView
         self.table.clear()
-        print(self.b)
         self.row = len(self.b)
         self.cols = len(self.b[0])
         self.table.setColumnCount(self.cols)
@@ -45,9 +59,13 @@ class Gardener(QMainWindow):
         self.dialog = Counter_main()
         self.dialog.show()
     def room(self, event):
-        from Gardener.Room import Room_main
-        self.dialog = Room_main()
-        self.dialog.show()
+        from Gardener.Room import Room_main, Room_mainControl
+        from Gardener.Gardener import GardenerAPI
+        self.api = GardenerAPI(self.user_id)
+        self.b = self.api.showShare(self.user_id)
+        # self.g = Room_mainControl(self.b)
+        self.j = Room_main(self.user_id, self.b)
+        self.j.show()
 
 
 class Casher(QMainWindow):
@@ -140,6 +158,6 @@ if __name__ == '__main__':
     session = create_session(de)
     app = QApplication(sys.argv)
     # w = Control.check()
-    w = Gardener("1")
+    w = Gardener("0")
     w.show()
     app.exec_()

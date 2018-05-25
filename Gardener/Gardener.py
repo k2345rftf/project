@@ -79,8 +79,8 @@ class Gardener_work:
 	def ChangePassword(self, password):
 		from database import User
 		self.password = password
-		return session.query(User).filter(User.id == self.user_id).update({"password" : self.password})
-
+		session.query(User).filter(User.id == self.user_id).update({"password" : self.password})
+		return session.commit()
 
 	def insert_counter(self, value, name_serv):
 
@@ -102,29 +102,36 @@ class Gardener_work:
 						        user_id = self.user_id,
 						        name_counter = self.name_serv,
 						        value = float(self.value.replace(",",".")))
-			return self.b
+			session.add(self.b)
+			return session.commit()
 
 	def addCounter(self, typeCounter, classAccur):
 		from database import CounterUnit
 		import datetime 
 		self.typeCounter = typeCounter
 		self.classAccur = classAccur
+		self.valid = session.query(Service.name_service).filter(Service.name_service == self.typeCounter).all()
+		if len(self.valid) == 0:
+			self.err = "Такой услуги нет"
+			return self.err
 		self.r = session.query(CounterUnit.number).filter(CounterUnit.user_id == self.user_id).all()
-		self.numb = self.r[len(self.r)-1][0]
-
+		try:
+			self.numb = self.r[len(self.r)-1][0]
+		except IndexError:
+			self.numb = -1
 		self.b = CounterUnit(
 			number = self.numb+1,
         	user_id = self.user_id,
         	dateUnstCount = datetime.datetime.now(),
         	typeCounter = self.typeCounter,
         	classAccur = float(self.classAccur.replace(",",".")))
-		return session.add(self.b)
+		session.add(self.b)
+		return session.commit()
 
 class GardenerAPI(ShowUserRegion, ShowHistoryPayment, Gardener_work):
 	def __init__(self, user_id):
 		self.user_id = user_id
 		super(GardenerAPI, self).__init__(self.user_id)
-	@classmethod
 	def showHistory(self,user_id, *date):
 		from database import isNone
 		self.user_id = user_id
@@ -133,25 +140,20 @@ class GardenerAPI(ShowUserRegion, ShowHistoryPayment, Gardener_work):
 			return ShowHistoryPayment(self.user_id).show_area(self.date)
 		else:
 			return ShowHistoryPayment(self.user_id).show_all()
-	@classmethod
 	def showShare(self, user_id):
 		self.user_id = user_id
 		return ShowUserRegion(self.user_id).show()
-	@classmethod
 	def insertCounter(self, user_id, value, name_serv):
 		self.value = value
 		self.user_id = user_id
 		self.name_serv = name_serv
 		return Gardener_work(self.user_id).insert_counter(self.value, self.name_serv)
-	@classmethod
 	def insCountUnit(self,user_id, typeCounter, classAccur):
 		self.classAccur = classAccur
 		self.user_id = user_id
 		self.typeCounter = typeCounter
 		return Gardener_work(self.user_id).addCounter(self.typeCounter, self.classAccur)
-	@classmethod
-	def changePass(self,user_id, password):
-		self.user_id = user_id
+	def changePass(self, password):
 		self.password = password
 		return Gardener_work(self.user_id).ChangePassword(self.password)		
 
