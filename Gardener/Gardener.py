@@ -15,14 +15,16 @@ class ShowUserRegion:
 
 	def show(self):
 		from database import Share, Region
-		self.b = []
+		self.o = []
 		self.reg = self.region_id()
 		for self.i in range(len(self.reg)):
-
-			self.data = session.query(Region.number_region, Share.share).filter(Region.region_id == Share.region_id).\
-																		filter(Share.region_id == self.reg[self.i]).add()
-			self.b.append(self.data)
-		return self.b
+			self.o.append([])
+			for self.region, self.s in session.query(Region.number_region, Share.share).filter(Region.region_id == Share.region_id).\
+																		filter(Share.region_id == self.reg[self.i]):
+			
+				self.o[self.i].append(self.region)
+				self.o[self.i].append(self.s)
+		return self.o
 
 
 

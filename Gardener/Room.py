@@ -31,12 +31,13 @@ class Room_mainControl:
 			self.table.setColumnCount(self.cols)
 			self.table.setRowCount(self.row)
 			self.name = ["Номер региона","Занимаемая часть"]
-			for i in range(len(self.b)-1):            
+			for i in range(len(self.b)):            
 				for j in range(len(self.b[i])):
 					self.table.setHorizontalHeaderItem(j,QTableWidgetItem(str(self.name[j])))
-					self.table.setItem(i+1 , j, QTableWidgetItem(str(self.b[i+1][j])))
+					self.table.setItem(i , j, QTableWidgetItem(str(self.b[i][j])))
+					self.table.resizeColumnsToContents()
 		else:
-			self.table.removeCellWidget
+			self.table.removeCellWidget()
 			self.view.ui.label_4.setText("Вы не владеете регионом")
 	def button(self):
 		self.pas1 = self.view.ui.ChPass.text()

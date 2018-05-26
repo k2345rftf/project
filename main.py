@@ -77,9 +77,9 @@ class Garden_Controller:
         from Gardener.Room import Room_main, Room_mainControl
         from Gardener.Gardener import GardenerAPI
         self.api = GardenerAPI(self.user_id)
-        self.b = self.api.showShare(self.user_id)
+        self.o = self.api.showShare(self.user_id)
         # self.g = Room_mainControl(self.b)
-        self.j = Room_main(self.user_id, self.b)
+        self.j = Room_main(self.user_id, self.o)
         self.j.show()
 
 
@@ -173,6 +173,6 @@ if __name__ == '__main__':
     session = create_session(de)
     app = QApplication(sys.argv)
     # w = Control.check()
-    w = Gardener("1")
+    w = Gardener("2")
     w.show()
     app.exec_()

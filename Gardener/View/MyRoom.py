@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(600, 430)
+        Dialog.resize(720, 430)
         self.button = QtWidgets.QPushButton(Dialog)
         self.button.setGeometry(QtCore.QRect(30, 370, 150, 32))
         self.button.setObjectName("button")
@@ -19,7 +19,7 @@ class Ui_Dialog(object):
         self.buttonBox.setGeometry(QtCore.QRect(250, 370, 341, 32))
         self.buttonBox.setObjectName("buttonBox")
         self.TableView = QtWidgets.QTableWidget(Dialog)
-        self.TableView.setGeometry(QtCore.QRect(300, 50, 301, 300))
+        self.TableView.setGeometry(QtCore.QRect(300, 50, 350, 300))
         self.TableView.setObjectName("TableView")
         self.TableView.setColumnCount(0)
         self.TableView.setRowCount(0)
