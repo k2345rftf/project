@@ -66,8 +66,9 @@ class ShowHistoryPayment:
 			self.b.append([])
 
 			for self.i in range(len(self.a)):
-				self.b[self.j].append(self.a[self.i-1])
+				self.b[self.j].append(self.a[self.i])
 			self.j=self.j+1
+		print(self.b[0])
 		return self.b
 
 
@@ -95,13 +96,19 @@ class Gardener_work:
 			self.value = value
 			self.id_counter = select_obj(Counter.id_counter,Counter.user_id, self.user_id, None, None)
 			if len(self.id_counter) == 0:
-				self.id_counter.append(0)
+				self.id_counter = -1
+			else:
+				self.id_counter = self.id_counter[len(self.id_counter)-1]
+				self.valid = session.query(Counter.value).filter(Counter.id_counter == self.id_counter).all()
+				print(self.valid)
+				if self.valid[0][0] >= self.value:
+					return "Перепроверьте показания счетчика!!!!"
 
 			self.b = Counter(	date = datetime.datetime.now(),
-								id_counter = self.id_counter,
+								id_counter = self.id_counter+1,
 						        user_id = self.user_id,
 						        name_counter = self.name_serv,
-						        value = float(self.value.replace(",",".")))
+						        value = float(self.value))
 			session.add(self.b)
 			return session.commit()
 
@@ -110,7 +117,8 @@ class Gardener_work:
 		import datetime 
 		self.typeCounter = typeCounter
 		self.classAccur = classAccur
-		self.valid = session.query(Service.name_service).filter(Service.name_service == self.typeCounter).all()
+		self.valid = session.query(CounterUnit.typeCounter).filter(CounterUnit.typeCounter == self.typeCounter).\
+															filter(CounterUnit.user_id == self.user_id).all()
 		if len(self.valid) == 0:
 			self.err = "Такой услуги нет"
 			return self.err
@@ -128,18 +136,35 @@ class Gardener_work:
 		session.add(self.b)
 		return session.commit()
 
+
+	def CheckCount(self, name_counter):
+		from database import CounterUnit
+		import datetime 
+		self.typeCounter = name_counter
+		self.valid = session.query(CounterUnit.typeCounter).filter(CounterUnit.typeCounter == self.typeCounter).\
+															filter(CounterUnit.user_id == self.user_id).all()
+		if len(self.valid)!=0:
+			return False
+		else:
+			self.err = "На данную услугу у вас нет счетчика"
+			return self.err		
+		
+
 class GardenerAPI(ShowUserRegion, ShowHistoryPayment, Gardener_work):
 	def __init__(self, user_id):
 		self.user_id = user_id
 		super(GardenerAPI, self).__init__(self.user_id)
+	def checkCounter(self, name_counter):
+		self.name_counter = name_counter
+		return Gardener_work(self.user_id).CheckCount(self.name_counter)
 	def showHistory(self,user_id, *date):
 		from database import isNone
 		self.user_id = user_id
 		self.date = date
-		if isNone(self.date):
-			return ShowHistoryPayment(self.user_id).show_area(self.date)
-		else:
+		if len(self.date)==0:
 			return ShowHistoryPayment(self.user_id).show_all()
+		else:
+			return ShowHistoryPayment(self.user_id).show_area(self.date)
 	def showShare(self, user_id):
 		self.user_id = user_id
 		return ShowUserRegion(self.user_id).show()

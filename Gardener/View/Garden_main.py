@@ -7,6 +7,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from datetime import datetime
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -19,13 +20,14 @@ class Ui_MainWindow(object):
         self.TableView.setObjectName("TableView")
         self.TableView.setColumnCount(0)
         self.TableView.setRowCount(0)
-        self.choose = QtWidgets.QComboBox(MainWindow)
-        self.choose.setGeometry(QtCore.QRect(0, 30, 181, 30))
-        self.choose.setObjectName("choose")
-        self.choose.addItem("")
-        self.choose.addItem("")
+        self.dateEdit = QtWidgets.QDateEdit(MainWindow)
+        self.dateEdit.setGeometry(QtCore.QRect(10, 30, 110, 25))
+        self.dateEdit.setObjectName("dateEdit")
+        self.dateEdit1 = QtWidgets.QDateEdit(MainWindow)
+        self.dateEdit1.setGeometry(QtCore.QRect(150, 30, 110, 25))
+        self.dateEdit1.setObjectName("dateEdit1")
         self.enter = QtWidgets.QPushButton(MainWindow)
-        self.enter.setGeometry(QtCore.QRect(186, 30, 99, 30))
+        self.enter.setGeometry(QtCore.QRect(300, 30, 99, 30))
         self.enter.setObjectName("enter")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -52,8 +54,8 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.menu.setTitle(_translate("MainWindow", "Файл"))
-        self.choose.setItemText(0, _translate("MainWindow", "Регионы во владении"))
-        self.choose.setItemText(1, _translate("MainWindow", "История платежей"))
+        # self.choose.setItemText(0, _translate("MainWindow", "Регионы во владении"))
+        # self.choose.setItemText(1, _translate("MainWindow", "История платежей"))
         self.action_2.setText(_translate("MainWindow", "Личный Кабинет"))
         self.action_3.setText(_translate("MainWindow", "Внести показания счетчика"))
         self.enter.setText(_translate("MainWindow", "Показать"))

@@ -34,7 +34,9 @@ class Garden_Controller:
         ui.action_3.triggered.connect(self.count)
     def button(self):
         from PyQt5.QtWidgets import QTableWidgetItem
+
         self.b = self.parametr()
+        print(self.b)
         if len(self.b) == 0:
             return 0
         self.table = self.view.ui.TableView
@@ -51,12 +53,25 @@ class Garden_Controller:
                 self.table.setItem(i+1 , j, QTableWidgetItem(str(self.b[i+1][j])))
     def parametr(self):
         from Gardener.Gardener import GardenerAPI
+        import datetime
         self.b = GardenerAPI(self.user_id)
-        self.c = self.b.showHistory(self.user_id)
+        self.date = []
+        self.date.append(str(self.view.ui.dateEdit.text()))
+        self.date.append(str(self.view.ui.dateEdit1.text()))
+
+        if str(self.date[0]) in str(self.date[1]) and str(self.date[1]) in "01.01.2000":
+            self.c = self.b.showHistory(self.user_id)
+
+        else:
+            self.view.ui.TableView.clear()
+            self.date1 = self.date[0].split(".")
+            self.date2 = self.date[1].split(".")
+            self.c = self.b.showHistory(self.user_id, datetime.datetime(int(self.date1[2]), int(self.date1[1]),int(self.date1[0])),
+            datetime.datetime(int(self.date2[2]),int(self.date2[0]),int(self.date2[0])))
         return self.c
     def count(self, event):
         from Gardener.counter import Counter_main
-        self.dialog = Counter_main()
+        self.dialog = Counter_main(self.user_id)
         self.dialog.show()
     def room(self, event):
         from Gardener.Room import Room_main, Room_mainControl
@@ -158,6 +173,6 @@ if __name__ == '__main__':
     session = create_session(de)
     app = QApplication(sys.argv)
     # w = Control.check()
-    w = Gardener("0")
+    w = Gardener("1")
     w.show()
     app.exec_()
