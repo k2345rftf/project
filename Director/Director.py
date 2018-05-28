@@ -43,31 +43,6 @@ class Inventories:
         
 
 
-class Counters:
-  def __init__(self, *args):
-    self.args = args
-
-
-
-  def input_count(self, reading, name_counter):
-    self.name_counter = name_counter
-    self.reading = reading
-    self.h = []
-    for self.data in session.query(Counter.id_counter):
-      self.h.append(self.data)
-    try:
-      self.m = self.h[len(self.h) - 1][0] + 1
-    except:
-      self.m = 1
-    self.d = Counter(
-			date = datetime.datetime.now(),
-			id_counter = self.m,
-			user_id = -11,
-			name_counter = self.name_counter,
-			value = int(self.reading))
-    return session.add(self.d)
-
-
 class Debts:
 
   def __init__(self, *args):
@@ -88,29 +63,44 @@ class Debts:
 
 
 class ShowData:
-    
-  def __init__(self, **kwarg):
-    self.Full_name = kwarg.get("full_name")
-    self.number_region = kwarg.get("number_region")
+
   def get_table_history_payment(self, **kwargs):
+    from database import User, Share, Region
     self.Full_name = kwargs.get("full_name")
-    self.number_region = kwargs.get("number_region")
+    self.numb_region = kwargs.get("number_region")
+    self.user_id = ""
+    if (self.Full_name)==None or self.numb_region == None:
+      return session.query(Transactions.date,
+                                          Transactions.name_serv,
+                                          Transactions.cost_unit,
+                                          Transactions.cost,
+                                          Transactions.payment,
+                                          Transactions.overpayments,
+                                          Transactions.total).all()
     self.value = []
-    self.b = session.query(User.id).filter(User.NFC == self.Full_name).\
-                                                   filter(Share.region_id == Region.region_id).\
-                                                   filter(Region.number_region == self.number_region).all()
-    if len(self.b) != 0 :
-      self.user_id = self.b[0]
+
+    self.ids = session.query(User.id).filter(User.NFC == self.Full_name).all()
+    self.regs = session.query(Share.user_id).filter(Share.region_id == Region.region_id).filter(Region.number_region == self.numb_region).all()
+    for self.i in range(len(self.ids)):
+      for self.j in range(len(self.regs)):
+        if self.ids[self.i][0]==self.regs[self.j][0]:
+          self.user_id = str(self.ids[self.i][0])
+          break
+    if len(self.user_id) == 0:
+      self.user_id=-2
     else:
-      self.user_id = 0
+      self.user_id=int(self.user_id)
+    print(self.user_id)
     for self.history in session.query(Transactions.date,
                                           Transactions.name_serv,
                                           Transactions.cost_unit,
                                           Transactions.cost,
                                           Transactions.payment,
                                           Transactions.overpayments,
-                                          Transactions.total).filter(User.id == self.user_id):
+                                          Transactions.total).filter(Transactions.id_user == self.user_id):
       self.value.append(self.history)
+
+    print("+++++++++++++++++++++++")
          
     return self.value
 
@@ -150,10 +140,10 @@ class NewUser:
         privelege = self.privelege,
         counter = 0
         )
-      return session.add(self.b)
+      return self.b
     else:
-      self.err = "Error456"
-      return print(self.err)
+      self.err = "Такой пользователь уже есть в системе!!!!"
+      return self.err
 
 
 class NewInventory:
@@ -172,7 +162,7 @@ class NewInventory:
     except IndexError:
       self.number = -1
     self.result = session.query(Inventory.name_unit).filter(Inventory.name_unit == self.name).all()
-    print(self.name in self.result)
+
     for self.i in range(len(self.result)-1):
 
       if self.name in self.result[self.i]:
@@ -184,11 +174,19 @@ class NewInventory:
                         available = 1
 
       )
-    return session.add(self.b)
+    session.add(self.b)
+    session.commit()
 
 
 class Region_work:
-  
+  def check_region(self, number_region):
+    self.number_region = number_region
+    self.b = session.query(Region.number_region).filter(Region.number_region == self.number_region).all()
+    if len(self.b) == 0:
+      self.err = "Такого региона не существует!"
+      return self.err
+    else:
+      return 0
 
   def insertRegion(self, area):
     from database import Region
@@ -207,9 +205,14 @@ class Region_work:
     return session.add(self.b)
 
   def updateRegion(self, number_region, area):
+
     self.number_region = number_region
     self.area = area
-    return session.query(Region).filter(Region.number_region == self.number_region).update({"area": self.area})
+    self.b = self.check_region(self.number_region)
+    if self.b == 0:
+      session.query(Region).filter(Region.number_region == self.number_region).update({"area": self.area})
+    else:
+      return self.b
 
 class Share_work:
   def __init__(self, user_id):
@@ -232,7 +235,7 @@ class Share_work:
       self.value = self.area[0][0] - self.sum
       if self.value <0:
         self.err = "Please, check area and correct your mistakes"
-        print(self.err)
+
     except IndexError:
       self.value = None
     return self.value
@@ -240,12 +243,12 @@ class Share_work:
   def InsertShare(self, login, share, number_region, doc):
     from database import User, Share, isNone
     self.login = login
-    self.share = float(share.replace(",","."))
+    self.share = share
     self.number_region = int(number_region)
     self.doc = doc
     self.user_id = session.query(User.id).filter(User.login == self.login).all()
     try:
-      self.find = session.query(Share.user_id).filter(Share.user_id == self.user_id[0][0]).all()
+      self.find = session.query(Share.region_id).filter(Share.user_id == self.user_id[0][0]).filter(Region.number_region == self.number_region).all()
     except:
       self.err = "Такого пользователя не существует!!!"
       return self.err
@@ -253,9 +256,20 @@ class Share_work:
       self.err = "Данный регион либо не существует, либо полностью распределен!!!!!"
       return self.err
     if self.checkArea(self.number_region)-self.share < 0:
-      self.err = "something"
+      self.err = "Регион переполнен, введите меньшее кол-во"
       return self.err
-    if self.find == []:
+    print(self.find)
+    self.y = []
+    for self.i in range(len(self.find)):
+      self.y.append(self.find[self.i][0])
+    if self.number_region in self.y:
+      self.InsertHistory(user_id =self.user_id[0][0], number = self.number_region, share = self.share, id_seller = self.id)
+      session.query(Share).filter(Share.user_id == self.user_id[0][0]).update({
+                                                            "share": self.share,
+                                                            "doc":self.doc})
+      session.commit()
+      return 0
+    else:
       self.region = session.query(Region.region_id).filter(Region.number_region == self.number_region).all()
       self.InsertHistory(user_id =self.user_id[0][0], number = self.number_region, share = self.share, id_seller = self.id)
       self.b = Share(
@@ -264,13 +278,7 @@ class Share_work:
                     share = self.share,
                     doc = self.doc)
       
-      return session.add(self.b)
-    else:
-      self.InsertHistory(user_id =self.user_id[0][0], number = self.number_region, share = self.share, id_seller = self.id)
-      return session.query(Share).filter(Share.user_id == self.user_id[0][0]).update({
-                                                            "share": self.share,
-                                                            "doc":self.doc})
-
+      return self.b
 
 
   def InsertHistory(self, **kwargs):
@@ -303,7 +311,8 @@ class Share_work:
     return session.add(self.b)
 
 class ShowHistory:
-
+  def __init__(self, *args):
+    self.args = args
   def show_all(self):
     from database import User, Region, HistoryRegion
     self.b = session.query(
@@ -322,14 +331,14 @@ class ShowHistory:
     User.NFC,
     HistoryRegion.share).filter(Region.region_id == HistoryRegion.region_id).\
                           filter(HistoryRegion.date > self.date[0]).\
-                          filter(HistoryRegion.date > self.date[1]).all()
+                          filter(HistoryRegion.date < self.date[1]).all()
 
 
 
 class ShowDirectorAPI(ShowHistory, ShowData, Companies, Inventories, Debts):
   def __init__(self, **kwargs):
     self.kwargs = kwargs
-    super().__init__()
+    super(ShowDirectorAPI, self).__init__()
 
 
   def showHist(self, *args):
@@ -347,9 +356,9 @@ class ShowDirectorAPI(ShowHistory, ShowData, Companies, Inventories, Debts):
   
   def showComp(self, *args):
     self.args = args
-    try:
+    if len(self.args) != 0:
       self.value = Companies().show_area(self.args)
-    except IndexError:
+    else:
       self.value = Companies().show_all()
     return self.value
   
@@ -364,7 +373,7 @@ class ShowDirectorAPI(ShowHistory, ShowData, Companies, Inventories, Debts):
 
 
 
-class InsertDirectorAPI(Share_work, Region_work, NewInventory, NewUser, Counters):
+class InsertDirectorAPI(Share_work, Region_work, NewInventory, NewUser):
   def __init__(self, *args):
     self.args = args
     super().__init__(self.args)
@@ -379,12 +388,8 @@ class InsertDirectorAPI(Share_work, Region_work, NewInventory, NewUser, Counters
   def insertInv(self, name):
     self.name = name
     return NewInventory(self.name).insertInventory(self.name)
-  def insertCounter(self, value, name_counter):
-    self.value = value
-    self.name_counter = name_counter
-    return Counters().input_count(self.value, self.name_counter)
-  def insertShare(self,id, login, share, number_region, doc):
-    self.id = id
+  def insertShare(self,ids, login, share, number_region, doc):
+    self.id = ids
     self.login = login
     self.share = share
     self.number_region = number_region
@@ -401,13 +406,6 @@ class InsertDirectorAPI(Share_work, Region_work, NewInventory, NewUser, Counters
 
 de = create_debug_engine(True)
 session = create_session(de)
-a = InsertDirectorAPI()
-date = ["20.12.2000", "20.12.2018"]
-
-print(a.insertInv("9"))
-session.commit()
-
-print(1)
 
 
 

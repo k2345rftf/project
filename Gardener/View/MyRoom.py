@@ -12,6 +12,8 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(720, 430)
+        Dialog.setMinimumSize(QtCore.QSize(720, 430))
+        Dialog.setMaximumSize(QtCore.QSize(720, 430))
         self.button = QtWidgets.QPushButton(Dialog)
         self.button.setGeometry(QtCore.QRect(30, 370, 150, 32))
         self.button.setObjectName("button")

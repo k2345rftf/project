@@ -70,7 +70,6 @@ class ShowHistoryPayment:
 			for self.i in range(len(self.a)):
 				self.b[self.j].append(self.a[self.i])
 			self.j=self.j+1
-		print(self.b[0])
 		return self.b
 
 

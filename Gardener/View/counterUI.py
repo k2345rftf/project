@@ -14,6 +14,8 @@ class Counter(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(495, 376)
+        Dialog.setMinimumSize(QtCore.QSize(495, 376))
+        Dialog.setMaximumSize(QtCore.QSize(495, 376))
         self.buttonBox = QtWidgets.QDialogButtonBox(Dialog)
         self.buttonBox.setGeometry(QtCore.QRect(50, 330, 341, 32))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)

@@ -13,6 +13,8 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1280, 720)
+        MainWindow.setMinimumSize(QtCore.QSize(1280, 720))
+        MainWindow.setMaximumSize(QtCore.QSize(1280, 720))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.TableView = QtWidgets.QTableWidget(MainWindow)
