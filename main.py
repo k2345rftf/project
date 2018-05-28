@@ -40,10 +40,16 @@ class Garden_Controller:
             return 0
         self.table = self.view.ui.TableView
         self.table.clear()
-        self.row = len(self.b)
-        self.cols = len(self.b[0])
-        self.table.setColumnCount(self.cols)
-        self.table.setRowCount(self.row)
+        self.row = 20
+        self.cols = 10
+        if self.cols >= len(self.b):
+            self.table.setColumnCount(self.cols)
+        else:
+            self.table.setColumnCount(len(self.b))
+        if self.row >= len(self.b[0]):
+            self.table.setRowCount(self.row)
+        else:
+            self.table.setRowCount(len(self.b[0]))
         self.name = ["Дата платежа","Наименование","Цена за единицу","Цена","платеж","переплата","Итог"]
         for i in range(len(self.b)):
             
@@ -122,6 +128,7 @@ class Director_Controller:
         ui.action_2.triggered.connect(self.inventory)
         ui.action_3.triggered.connect(self.region)
         ui.action_4.triggered.connect(self.share)
+        ui.action_6.triggered.connect(self.smth)
     def line(self):
         self.text = self.view.ui.comboBox.currentText()
         if self.text == "История регионов" or self.text=="Платежи предприятия":
@@ -262,6 +269,10 @@ class Director_Controller:
         from Director.Region import Region 
         self.dialog = Region()
         self.dialog.show()
+    def smth(self):
+        g = Gardener("-11")
+        g.show()
+
 
 
 
@@ -334,6 +345,8 @@ if __name__ == '__main__':
     de = create_debug_engine(True)
     session = create_session(de)
     app = QApplication(sys.argv)
-    w = Control.check()
+    # w = Control.check()
+    w = Director("1")
+    w.show()
     session.commit()
     app.exec_()

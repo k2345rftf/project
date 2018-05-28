@@ -49,17 +49,23 @@ class Debts:
     self.args = args
 
   def show_all(self):
+    import time
     self.c = []
+    self.date = datetime.datetime.strptime(time.ctime(time.time() - 30*86400), "%c")
     for self.data in session.query(User.NFC,
                                        Transactions.date,
                                        Transactions.name_serv,
                                        Transactions.cost,
                                        Transactions.payment,
                                        Transactions.overpayments,
-                                       Transactions.total).filter(User.id == Transactions.id_user).filter(Transactions.overpayments < 0):
+                                       Transactions.total).filter(Transactions.date >= self.date).filter(User.id == Transactions.id_user):
       self.c.append(self.data)
+    self.result=[]
+    for self.i in range(len(self.c)):
+      if self.c[self.i][6] <0:
+        self.result.append(self.c[self.i])
                     
-    return self.c
+    return self.result
 
 
 class ShowData:

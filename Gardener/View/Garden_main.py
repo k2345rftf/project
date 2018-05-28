@@ -15,31 +15,53 @@ class Ui_MainWindow(object):
         MainWindow.resize(1280, 720)
         MainWindow.setMinimumSize(QtCore.QSize(1280, 720))
         MainWindow.setMaximumSize(QtCore.QSize(1280, 720))
+
+
+        self.scrollArea = QtWidgets.QScrollArea(MainWindow)
+        self.scrollArea.setGeometry(QtCore.QRect(0, 60, 1280, 720))
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.setObjectName("scrollArea")
+
+
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
+
         self.TableView = QtWidgets.QTableWidget(MainWindow)
-        self.TableView.setGeometry(QtCore.QRect(0, 65, 1280, 720))
+        self.TableView.setGeometry(QtCore.QRect(0, 70, 1280, 650))
         self.TableView.setObjectName("TableView")
         self.TableView.setColumnCount(0)
         self.TableView.setRowCount(0)
+
+        self.scrollAreaWidgetContents = QtWidgets.QWidget(self.TableView)
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 70, 1200, 720))
+        self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+        self.scrollArea.ensureVisible(10,10, xMargin=50, yMargin=50)
+
+
         self.dateEdit = QtWidgets.QDateEdit(MainWindow)
         self.dateEdit.setGeometry(QtCore.QRect(10, 30, 110, 25))
         self.dateEdit.setObjectName("dateEdit")
+
         self.dateEdit1 = QtWidgets.QDateEdit(MainWindow)
         self.dateEdit1.setGeometry(QtCore.QRect(150, 30, 110, 25))
         self.dateEdit1.setObjectName("dateEdit1")
+
         self.enter = QtWidgets.QPushButton(MainWindow)
         self.enter.setGeometry(QtCore.QRect(300, 30, 99, 30))
         self.enter.setObjectName("enter")
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1280, 22))
         self.menubar.setObjectName("menubar")
         self.menu = QtWidgets.QMenu(self.menubar)
         self.menu.setObjectName("menu")
+
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
+
         MainWindow.setStatusBar(self.statusbar)
         self.action_2 = QtWidgets.QAction(MainWindow)
         self.action_2.setObjectName("action_2")

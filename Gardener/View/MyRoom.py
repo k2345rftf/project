@@ -14,36 +14,52 @@ class Ui_Dialog(object):
         Dialog.resize(720, 430)
         Dialog.setMinimumSize(QtCore.QSize(720, 430))
         Dialog.setMaximumSize(QtCore.QSize(720, 430))
+        
+        self.scrollArea = QtWidgets.QScrollArea(Dialog)
+        self.scrollArea.setGeometry(QtCore.QRect(300, 50, 350, 300))
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.setObjectName("scrollArea")
+
         self.button = QtWidgets.QPushButton(Dialog)
         self.button.setGeometry(QtCore.QRect(30, 370, 150, 32))
         self.button.setObjectName("button")
+
         self.buttonBox = QtWidgets.QPushButton(Dialog)
         self.buttonBox.setGeometry(QtCore.QRect(250, 370, 341, 32))
         self.buttonBox.setObjectName("buttonBox")
+
         self.TableView = QtWidgets.QTableWidget(Dialog)
         self.TableView.setGeometry(QtCore.QRect(300, 50, 350, 300))
         self.TableView.setObjectName("TableView")
         self.TableView.setColumnCount(0)
         self.TableView.setRowCount(0)
 
+        self.scrollAreaWidgetContents = QtWidgets.QWidget(self.TableView)
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(300, 50, 350, 300))
+        self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+        self.scrollArea.ensureVisible(0,0, xMargin=50, yMargin=50)
+
         self.label = QtWidgets.QLabel(Dialog)
         self.label.setGeometry(QtCore.QRect(300, 20, 351, 17))
         self.label.setObjectName("label")
+
         self.label_2 = QtWidgets.QLabel(Dialog)
         self.label_2.setGeometry(QtCore.QRect(30, 20, 231, 17))
         self.label_2.setObjectName("label_2")
+
         self.label_3 = QtWidgets.QLabel(Dialog)
         self.label_3.setGeometry(QtCore.QRect(30, 80, 231, 17))
         self.label_3.setObjectName("label_3")
-        self.label_4 = QtWidgets.QLabel(Dialog)
-        self.label_4.setGeometry(QtCore.QRect(310, 60, 351, 17))
-        self.label_4.setObjectName("label_4")
+
         self.CounterUn = QtWidgets.QCommandLinkButton(Dialog)
         self.CounterUn.setGeometry(QtCore.QRect(20, 240, 230, 41))
         self.CounterUn.setObjectName("CounterUn")
+
         self.ChPass = QtWidgets.QLineEdit(Dialog)
         self.ChPass.setGeometry(QtCore.QRect(30, 40, 241, 27))
         self.ChPass.setObjectName("ChPass")
+
         self.ChPass1 = QtWidgets.QLineEdit(Dialog)
         self.ChPass1.setGeometry(QtCore.QRect(30, 100, 241, 27))
         self.ChPass1.setObjectName("ChPass")
