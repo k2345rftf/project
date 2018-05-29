@@ -8,10 +8,14 @@ from Gardener.View.Garden_main import Ui_MainWindow
 
         
 class Gardener(QMainWindow):
+
+
     def get_id(self):
         return self.user_id
 
     model = property(get_id)
+
+
 
     def __init__(self, user_id):
         super(Gardener, self).__init__()
@@ -23,6 +27,8 @@ class Gardener(QMainWindow):
 
 
 class Garden_Controller:
+
+
     def __init__(self, view):
         self.user_id = view.model
         self.view = view
@@ -32,6 +38,8 @@ class Garden_Controller:
         ui.enter.pressed.connect(self.button)
         ui.action_2.triggered.connect(self.room)
         ui.action_3.triggered.connect(self.count)
+
+
     def button(self):
         from PyQt5.QtWidgets import QTableWidgetItem
 
@@ -51,11 +59,17 @@ class Garden_Controller:
         else:
             self.table.setRowCount(len(self.b[0]))
         self.name = ["Дата платежа","Наименование","Цена за единицу","Цена","платеж","переплата","Итог"]
+        for j in range(len(self.name)):
+            
+            self.table.setHorizontalHeaderItem(j,QTableWidgetItem(str(self.name[j])))
         for i in range(len(self.b)):
             
             for j in range(len(self.b[i])):
-                self.table.setHorizontalHeaderItem(j,QTableWidgetItem(str(self.name[j])))
+
                 self.table.setItem(i , j, QTableWidgetItem(str(self.b[i][j])))
+        self.table.resizeColumnsToContents()
+
+
     def parametr(self):
         from Gardener.Gardener import GardenerAPI
         import datetime
@@ -74,10 +88,14 @@ class Garden_Controller:
             self.c = self.b.showHistory(self.user_id, datetime.datetime(int(self.date1[2]), int(self.date1[1]),int(self.date1[0])),
             datetime.datetime(int(self.date2[2]),int(self.date2[0]),int(self.date2[0])))
         return self.c
+
+
     def count(self, event):
         from Gardener.counter import Counter_main
         self.dialog = Counter_main(self.user_id)
         self.dialog.show()
+
+
     def room(self, event):
         from Gardener.Room import Room_main, Room_mainControl
         from Gardener.Gardener import GardenerAPI
@@ -89,10 +107,14 @@ class Garden_Controller:
 
 
 class Casher(QMainWindow):
+
+
     def __init__(self, user_id):
         self.user_id = user_id
         super(Casher, self).__init__()
         self.wind()
+
+
     def wind(self):
         from Casher.View.Casher_main import Ui_MainWindow
         self.ui = Ui_MainWindow()
@@ -101,14 +123,21 @@ class Casher(QMainWindow):
 
 
 class Director(QMainWindow):
+
+
     def get_id(self):
         return self.user_id
 
+
     model = property(get_id)
+
+
     def __init__(self, user_id):
         self.user_id = user_id
         super(Director, self).__init__()
         self.wind()
+
+
     def wind(self):
         from Director.View.Main_window import Ui_MainWindow
         self.ui = Ui_MainWindow()
@@ -116,7 +145,10 @@ class Director(QMainWindow):
         self.controller = Director_Controller(self)
         # self.controller.vieww()
 
+
 class Director_Controller:
+
+
     def __init__(self, view):
         self.view = view
         self.user_id = view.model
@@ -128,7 +160,11 @@ class Director_Controller:
         ui.action_2.triggered.connect(self.inventory)
         ui.action_3.triggered.connect(self.region)
         ui.action_4.triggered.connect(self.share)
+        ui.action_5.triggered.connect(self.see)
         ui.action_6.triggered.connect(self.smth)
+        self.vieww()
+
+
     def line(self):
         self.text = self.view.ui.comboBox.currentText()
         if self.text == "История регионов" or self.text=="Платежи предприятия":
@@ -146,6 +182,8 @@ class Director_Controller:
             self.view.ui.widget1.hide()
             self.tables(self.text)
         return self.text
+
+
     def parametr(self, text, *args):
         import datetime
         self.text = text
@@ -193,11 +231,18 @@ class Director_Controller:
 
         else:
             return self.api.showInvent()
+
+
     def vieww(self):
         self.text ="История платежей"
         self.view.ui.widget1.show()
         self.view.ui.widget.hide()
+        self.view.ui.lineEdit1.setText("Введите №региона")
+        self.view.ui.lineEdit1_2.setText("Введите имя")
+
         self.tables(self.text)
+
+
     def tables(self, text, *args):
         self.args = args
 
@@ -217,6 +262,19 @@ class Director_Controller:
 
         self.row = 20
         self.cols = 10
+        if self.text == "История платежей":
+            self.name = ["ФИО","Дата платежа","Наименование","Цена за единицу","Цена","платеж","переплата","Итог"]
+        elif self.text =="Должники":
+            self.name = ["ФИО","Наименование","Задолженность"]
+        elif self.text == "Инвентарь":
+            self.name = ["Дата", "Инвентарный номер", "Наименование", "Наличие"]
+        elif self.text =="История регионов":
+            self.name = ["Дата покупки", "Номер участка", "ФИО покупателя", "занимаемая площадь"]
+        else:
+            self.name = ["Дата","ФИО покупателя","Наименование услуги","Цена"]
+
+
+
         if len(self.b) ==0:
             self.table.setColumnCount(self.cols)
             self.table.setRowCount(self.row)
@@ -230,12 +288,17 @@ class Director_Controller:
                 self.table.setRowCount(self.row)
             else:
                 self.table.setRowCount(len(self.b[0]))
-        # self.name = ["Дата платежа","Наименование","Цена за единицу","Цена","платеж","переплата","Итог"]
+        # self.name = []
+        for i in range(len(self.name)):
+            self.table.setHorizontalHeaderItem(i,QTableWidgetItem(str(self.name[i])))
         for i in range(len(self.b)):
             
             for j in range(len(self.b[i])):
-                # self.table.setHorizontalHeaderItem(j,QTableWidgetItem(str(self.name[j])))
+                
                 self.table.setItem(i , j, QTableWidgetItem(str(self.b[i][j])))
+        self.table.resizeColumnsToContents()
+
+
     def button(self):
         self.a = ""
         self.b = ""
@@ -245,6 +308,8 @@ class Director_Controller:
         self.b=self.view.ui.lineEdit_2.text()
         self.text = self.line()
         self.tables(self.text, self.a, self.b)
+
+
     def button1(self):
         
         self.table = self.view.ui.tableWidget
@@ -253,45 +318,153 @@ class Director_Controller:
         self.text = self.line()
         self.view.ui.tableWidget.clear()
         self.tables(self.text, self.u, self.e)
+
+
     def newuser(self):
         from Director.NewUser import NewUser 
         self.dialog = NewUser()
         self.dialog.show()
+
+
     def inventory(self):
         from Director.Inventory import Inventory 
         self.dialog = Inventory()
         self.dialog.show()
+
+
     def share(self):
         from Director.Share import Share 
         self.dialog = Share(self.user_id)
         self.dialog.show()
+
+
     def region(self):
         from Director.Region import Region 
         self.dialog = Region()
         self.dialog.show()
+
+
     def smth(self):
-        g = Gardener("-11")
-        g.show()
+        self.g = Gardener("-11")
+        self.g.show()
+    def see(self):
+        self.g = Gardener(self.user_id)
+        self.g.show()
 
 
 
 
 
 class Accountant(QMainWindow):
+
+
+    def get_id(self):
+        return self.user_id
+
+    model = property(get_id)
+
+
     def __init__(self, user_id):
         self.user_id = user_id
         super(Accountant, self).__init__()
         self.wind()
+
+
     def wind(self):
-        from Accountant.View.Accountant_main import Ui_MainWindow
+        from Accountant.View.Main_window import Ui_MainWindow
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        self.controller = Accountant_controller(self)
+
+
+class Accountant_controller:
+
+
+    def __init__(self, view):
+        self.view = view
+        ui = view.ui
+        self.user_id = view.model
+
+        ui.action.triggered.connect(self.insert)
+        ui.comboBox.activated.connect(self.line)
+        ui.pushButton.pressed.connect(self.button)
+
+
+    def insert(self):
+        from Accountant.Insert import InsertService
+        self.a = InsertService()
+        self.a.show() 
+
+
+    def line(self):
+        self.b = self.view.ui.comboBox.currentText()
+        return self.b
+
+
+
+    def button(self):        
+        from PyQt5.QtWidgets import QTableWidgetItem
+
+        self.b = self.parametr()
+        if len(self.b) == 0:
+            return 0
+        self.table = self.view.ui.TableView
+        self.table.clear()
+        self.row = 20
+        self.cols = 10
+        if self.cols >= len(self.b):
+            self.table.setColumnCount(self.cols)
+        else:
+            self.table.setColumnCount(len(self.b))
+        if self.row >= len(self.b[0]):
+            self.table.setRowCount(self.row)
+        else:
+            self.table.setRowCount(len(self.b[0]))
+        self.name = ["Дата платежа","Наименование","Цена за единицу","Цена","платеж","переплата","Итог"]
+        for i in range(len(self.b)):
+            
+            for j in range(len(self.b[i])):
+                self.table.setHorizontalHeaderItem(j,QTableWidgetItem(str(self.name[j])))
+                self.table.setItem(i , j, QTableWidgetItem(str(self.b[i][j])))
+
+
+    def parametr(self):
+        from Accountant.Accountent import AccountentAPI
+        import datetime
+        self.b = AccountentAPI()
+        self.date = []
+        self.date.append(str(self.view.ui.dateEdit.text()))
+        self.date.append(str(self.view.ui.dateEdit_2.text()))
+        self.c = self.line()
+        if str(self.date[0]) in str(self.date[1]) and str(self.date[1]) in "01.01.2000":
+            if self.c=="Услуги":
+                self.c = self.b.showCompany()
+            else:
+                self.c = self.b.showHistory()
+
+        else:
+            self.view.ui.TableView.clear()
+            self.date1 = self.date[0].split(".")
+            self.date2 = self.date[1].split(".")
+            if self.c=="Услуги":
+                self.c = self.b.showCompany(datetime.datetime(int(self.date1[2]), int(self.date1[1]),int(self.date1[0])),
+            datetime.datetime(int(self.date2[2]),int(self.date2[0]),int(self.date2[0])))
+            else:
+                self.c = self.b.showHistory(datetime.datetime(int(self.date1[2]), int(self.date1[1]),int(self.date1[0])),
+            datetime.datetime(int(self.date2[2]),int(self.date2[0]),int(self.date2[0])))
+        return self.c
+
+
 
 class HiredWorker(QMainWindow):
+    
+
     def __init__(self, user_id):
         self.user_id = user_id
         super(HiredWorker, self).__init__()
         self.wind()
+    
+
     def wind(self):
         from HiredWorker.View.HiredWorker_main import Ui_MainWindow
         self.ui = Ui_MainWindow()
@@ -299,10 +472,14 @@ class HiredWorker(QMainWindow):
 
         
 class Control:
+
+
     def __init__(self, *args):
         super(Control, self).__init__()
         self.event = args
         self.priv = {"0": Gardener}
+    
+
     @classmethod
     def check(self, *args):
         self.event = args

@@ -49,21 +49,23 @@ class Debts:
     self.args = args
 
   def show_all(self):
-    import time
-    self.c = []
-    self.date = datetime.datetime.strptime(time.ctime(time.time() - 30*86400), "%c")
-    for self.data in session.query(User.NFC,
-                                       Transactions.date,
-                                       Transactions.name_serv,
-                                       Transactions.cost,
-                                       Transactions.payment,
-                                       Transactions.overpayments,
-                                       Transactions.total).filter(Transactions.date >= self.date).filter(User.id == Transactions.id_user):
-      self.c.append(self.data)
-    self.result=[]
-    for self.i in range(len(self.c)):
-      if self.c[self.i][6] <0:
-        self.result.append(self.c[self.i])
+    self.name_serv = []
+    self.result = []
+
+    for self.name in session.query(Service.name_service):
+      if self.name[0] in self.name_serv:
+        continue
+      else:
+        self.name_serv.append(self.name[0])
+    self.users = session.query(User.id, User.NFC).all()
+    for self.i in self.users:
+      self.debt = 0
+      for self.j in self.name_serv:
+        for self.total in session.query(Transactions.total).filter(Transactions.id_user == self.i[0]).\
+                                                              filter(Transactions.name_serv == self.j):
+          self.debt = self.total[0]
+        if self.debt < 0:
+          self.result.append((self.i[1], self.j, self.debt))
                     
     return self.result
 
@@ -76,13 +78,14 @@ class ShowData:
     self.numb_region = kwargs.get("number_region")
     self.user_id = ""
     if (self.Full_name)==None or self.numb_region == None:
-      return session.query(Transactions.date,
-                                          Transactions.name_serv,
-                                          Transactions.cost_unit,
-                                          Transactions.cost,
-                                          Transactions.payment,
-                                          Transactions.overpayments,
-                                          Transactions.total).all()
+      return session.query(User.NFC,
+                           Transactions.date,
+                           Transactions.name_serv,
+                           Transactions.cost_unit,
+                           Transactions.cost,
+                           Transactions.payment,
+                           Transactions.overpayments,
+                           Transactions.total).filter(User.id == Transactions.id_user).all()
     self.value = []
 
     self.ids = session.query(User.id).filter(User.NFC == self.Full_name).all()
@@ -97,13 +100,14 @@ class ShowData:
     else:
       self.user_id=int(self.user_id)
     print(self.user_id)
-    for self.history in session.query(Transactions.date,
-                                          Transactions.name_serv,
-                                          Transactions.cost_unit,
-                                          Transactions.cost,
-                                          Transactions.payment,
-                                          Transactions.overpayments,
-                                          Transactions.total).filter(Transactions.id_user == self.user_id):
+    for self.history in session.query(User.NFC,
+                           Transactions.date,
+                           Transactions.name_serv,
+                           Transactions.cost_unit,
+                           Transactions.cost,
+                           Transactions.payment,
+                           Transactions.overpayments,
+                           Transactions.total).filter(User.id == Transactions.id_user).filter(Transactions.id_user == self.user_id):
       self.value.append(self.history)
 
     print("+++++++++++++++++++++++")

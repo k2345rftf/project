@@ -95,6 +95,9 @@ class Ui_MainWindow(object):
         self.action_4 = QtWidgets.QAction(MainWindow)
         self.action_4.setObjectName("action_4")
 
+        self.action_5 = QtWidgets.QAction(MainWindow)
+        self.action_5.setObjectName("action_5")
+
         self.action_6 = QtWidgets.QAction(MainWindow)
         self.action_6.setObjectName("action_6")
 
@@ -102,6 +105,7 @@ class Ui_MainWindow(object):
         self.menu.addAction(self.action_2)
         self.menu.addAction(self.action_3)
         self.menu.addAction(self.action_4)
+        self.menu.addAction(self.action_5)
         self.menu.addAction(self.action_6)
         self.menubar.addAction(self.menu.menuAction())
 
@@ -118,5 +122,6 @@ class Ui_MainWindow(object):
         self.action_2.setText(_translate("MainWindow", "Добавить обьект"))
         self.action_3.setText(_translate("MainWindow", "Добавить регион"))
         self.action_4.setText(_translate("MainWindow", "Выделить участок"))
+        self.action_5.setText(_translate("MainWindow", "Оплата услуг председателя"))
         self.action_6.setText(_translate("MainWindow", "Услуги садоводства"))
 

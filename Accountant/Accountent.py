@@ -1,4 +1,4 @@
-from src.database import create_debug_engine, create_session
+from database import create_debug_engine, create_session
 
 class InsertService:
 
@@ -7,7 +7,7 @@ class InsertService:
 		self.a = self.param.split(".")
 		return datetime.datetime(int(self.a[2]), int(self.a[1]), int(self.a[0]), 0, 0, 0, 0)
 	def insert_serv(self, name_service, doc_serv, date_get, period, cost_unit, unit, peny_data, peny):
-		from src.database import User, Service, select_obj
+		from database import User, Service, select_obj
 		import datetime
 		self.name_services = name_service
 		self.doc_servs = doc_serv
@@ -32,12 +32,12 @@ class InsertService:
 					     unit = self.units,
 					     peny_data = self.__date(self.peny_dates),
 					     peny = int(self.penys))
-		return session.add(self.b)
+		return self.b
 
 class ShowService:
 	
 	def show_all(self):
-		from src.database import Service
+		from database import Service
 		import datetime
 		self.b = session.query( Servise.date,
 							    Servise.name_service,
@@ -51,7 +51,7 @@ class ShowService:
 		return self.b
 
 	def show_area(self, date):
-		from src.database import Service
+		from database import Service
 		import datetime		
 		self.date = date
 		self.b = session.query( Servise.date,
@@ -75,7 +75,7 @@ class ShowCompany:
 
 	
 	def show_all(self):
-		from src.database import User, Company
+		from database import User, Company
 		self.b = session.query( Company.date,
 							    User.NFC,
 							    Company.name_service,
@@ -83,7 +83,7 @@ class ShowCompany:
 		return self.b
 
 	def show_area(self, date):
-		from src.database import User, Company
+		from database import User, Company
 		self.date = date
 		self.b = session.query( Company.date,
 							    User.NFC,
@@ -96,21 +96,21 @@ class AccountentAPI(ShowCompany, ShowService, InsertService):
 	
 	def __init__(self):
 		
-		super().__init__()
+		super(AccountentAPI, self).__init__()
 		
 
 
 
-	def showCompany(self, date):
-		from src.database import isNone
+	def showCompany(self, *date):
+		from database import isNone
 		self.date = date
 		if isNone(self.date):
 			return ShowCompany().show_area(self.date)
 		else:
 			return ShowCompany().show_all()
 
-	def showService(self, date):
-		from src.database import isNone
+	def showService(self, *date):
+		from database import isNone
 		self.date = date
 		if isNone(self.date): 
 			return ShowCompany().show_area(self.date)
