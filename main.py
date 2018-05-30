@@ -288,7 +288,6 @@ class Director_Controller:
                 self.table.setRowCount(self.row)
             else:
                 self.table.setRowCount(len(self.b[0]))
-        # self.name = []
         for i in range(len(self.name)):
             self.table.setHorizontalHeaderItem(i,QTableWidgetItem(str(self.name[i])))
         for i in range(len(self.b)):
@@ -391,7 +390,7 @@ class Accountant_controller:
 
 
     def insert(self):
-        from Accountant.Insert import InsertService
+        from Accountant.Insert_main import InsertService
         self.a = InsertService()
         self.a.show() 
 
@@ -404,11 +403,10 @@ class Accountant_controller:
 
     def button(self):        
         from PyQt5.QtWidgets import QTableWidgetItem
-
         self.b = self.parametr()
         if len(self.b) == 0:
             return 0
-        self.table = self.view.ui.TableView
+        self.table = self.view.ui.tableWidget
         self.table.clear()
         self.row = 20
         self.cols = 10
@@ -420,38 +418,39 @@ class Accountant_controller:
             self.table.setRowCount(self.row)
         else:
             self.table.setRowCount(len(self.b[0]))
-        self.name = ["Дата платежа","Наименование","Цена за единицу","Цена","платеж","переплата","Итог"]
+        # self.name = ["Дата платежа","Наименование","Цена за единицу","Цена","платеж","переплата","Итог"]
         for i in range(len(self.b)):
             
             for j in range(len(self.b[i])):
-                self.table.setHorizontalHeaderItem(j,QTableWidgetItem(str(self.name[j])))
+                # self.table.setHorizontalHeaderItem(j,QTableWidgetItem(str(self.name[j])))
                 self.table.setItem(i , j, QTableWidgetItem(str(self.b[i][j])))
 
 
     def parametr(self):
         from Accountant.Accountent import AccountentAPI
         import datetime
-        self.b = AccountentAPI()
+        self.api = AccountentAPI()
         self.date = []
         self.date.append(str(self.view.ui.dateEdit.text()))
         self.date.append(str(self.view.ui.dateEdit_2.text()))
-        self.c = self.line()
+        self.text = self.line()
+
         if str(self.date[0]) in str(self.date[1]) and str(self.date[1]) in "01.01.2000":
-            if self.c=="Услуги":
-                self.c = self.b.showCompany()
+            if self.text!="Услуги":
+                self.c = self.api.showCompany()
             else:
-                self.c = self.b.showHistory()
+                self.c = self.api.showService()
 
         else:
-            self.view.ui.TableView.clear()
-            self.date1 = self.date[0].split(".")
-            self.date2 = self.date[1].split(".")
-            if self.c=="Услуги":
-                self.c = self.b.showCompany(datetime.datetime(int(self.date1[2]), int(self.date1[1]),int(self.date1[0])),
-            datetime.datetime(int(self.date2[2]),int(self.date2[0]),int(self.date2[0])))
+            self.view.ui.tableWidget.clear()
+            self.date1 = self.date[0]
+            self.date2 = self.date[1]
+            if self.text=="Услуги":
+                self.c = self.api.showService(self.date1, self.date2)
+
             else:
-                self.c = self.b.showHistory(datetime.datetime(int(self.date1[2]), int(self.date1[1]),int(self.date1[0])),
-            datetime.datetime(int(self.date2[2]),int(self.date2[0]),int(self.date2[0])))
+
+                self.c = self.api.showCompany(self.date1, self.date2)
         return self.c
 
 
@@ -507,11 +506,7 @@ class Control:
             elif self.event[0][0] == 4:
                 self.main_window = HiredWorker(self.event[0][1])
                 self.win.run(self.main_window)
-            
-            
-        
         else:
-            
             self.win.run(self.login) 
 
 
@@ -522,8 +517,8 @@ if __name__ == '__main__':
     de = create_debug_engine(True)
     session = create_session(de)
     app = QApplication(sys.argv)
-    # w = Control.check()
-    w = Director("1")
-    w.show()
+    w = Control.check()
+    # w = Accountant("1")
+    # w.show()
     session.commit()
     app.exec_()

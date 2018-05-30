@@ -1,10 +1,11 @@
 from database import create_debug_engine, create_session
-
+import datetime
 class InsertService:
 
-	def __date(self, param):
+	def date(self, param):
 		self.param = param
 		self.a = self.param.split(".")
+		print(self.a)
 		return datetime.datetime(int(self.a[2]), int(self.a[1]), int(self.a[0]), 0, 0, 0, 0)
 	def insert_serv(self, name_service, doc_serv, date_get, period, cost_unit, unit, peny_data, peny):
 		from database import User, Service, select_obj
@@ -17,30 +18,38 @@ class InsertService:
 		self.units = unit
 		self.peny_dates = peny_data
 		self.penys = peny
-		self.ids = select_obj(Service.id, Service.name_service, self.name_services, None, None)
+		self.ids = session.query(Service.id).all()
+		print(self.ids)
 		if len(self.ids) != 0:
-			self.ids1 = self.ids[len(self.ids)-1]
+			print(self.ids[len(self.ids)-1][0])
+			self.ids1 = self.ids[len(self.ids)-1][0]
 		else:
+			print(1)
 			self.ids1 = -1
 		self.b = Service(id = self.ids1+1,
 						 date = datetime.datetime.now(),
 					     name_service = self.name_services,
 					     doc_serv = self.doc_servs,
-					     date_get = self.__date(self.date_gets),
+					     date_get = self.date(self.date_gets),
 					     period = int(self.periods),
 					     cost_unit = float(self.cost_units.replace(",",".")),
 					     unit = self.units,
-					     peny_data = self.__date(self.peny_dates),
+					     peny_data = self.date(self.peny_dates),
 					     peny = int(self.penys))
 		return self.b
 
 class ShowService:
-	
+	def dates(self, param):
+		import datetime
+		self.param = param.split(".")
+		return datetime.datetime(int(self.param[2]), int(self.param[1]), int(self.param[0]))
+
+
 	def show_all(self):
 		from database import Service
 		import datetime
-		self.b = session.query( Servise.date,
-							    Servise.name_service,
+		self.b = session.query( Service.date,
+							    Service.name_service,
 							    Service.doc_serv,
 							    Service.period,
 							    Service.date_get,
@@ -54,15 +63,15 @@ class ShowService:
 		from database import Service
 		import datetime		
 		self.date = date
-		self.b = session.query( Servise.date,
-							    Servise.name_service,
+		self.b = session.query( Service.date,
+							    Service.name_service,
 							    Service.doc_serv,
 							    Service.period,
 							    Service.date_get,
 							    Service.cost_unit,
 							    Service.unit,
 							    Service.peny_date,
-							    Service.peny).filter(Service.date >= self.date[0]).filter(Service.date <=self.date[1]).all()					
+							    Service.peny).filter(Service.date >= self.dates(self.date[0])).filter(Service.date <=self.dates(self.date[1])).all()					
 		return self.b
 
 
@@ -85,37 +94,38 @@ class ShowCompany:
 	def show_area(self, date):
 		from database import User, Company
 		self.date = date
+
 		self.b = session.query( Company.date,
 							    User.NFC,
 							    Company.name_service,
-							    Company.cost).filter(User.id == Company.id_creditor).filter(Company.date >= self.dates(self.date[0])).filter(Company.date <=self.dates(self.date[1])).all()					
+							    Company.cost).filter(User.id == Company.id_creditor).filter(Company.date >= self.dates(self.date[0])).filter(Company.date <=self.dates(self.date[1])).all()
+		print(self.b)					
 		return self.b
 
 
 class AccountentAPI(ShowCompany, ShowService, InsertService):
 	
-	def __init__(self):
-		
+	def __init__(self, *args):		
 		super(AccountentAPI, self).__init__()
+		self.args = args
 		
-
-
 
 	def showCompany(self, *date):
 		from database import isNone
 		self.date = date
-		if isNone(self.date):
-			return ShowCompany().show_area(self.date)
-		else:
+		if len(self.date)==0:
 			return ShowCompany().show_all()
+		else:
+			return ShowCompany().show_area(self.date)
+
 
 	def showService(self, *date):
 		from database import isNone
 		self.date = date
-		if isNone(self.date): 
-			return ShowCompany().show_area(self.date)
+		if len(self.date)==0: 
+			return ShowService().show_all()
 		else:
-			return ShowCompany().show_all()
+			return ShowService().show_area(self.date)
 
 
 	def insert_service(self, name_service, doc_serv, date_get, period, cost_unit, unit, peny_date, peny):	
