@@ -80,7 +80,7 @@ class Ui_Form(object):
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Form"))
+        Form.setWindowTitle(_translate("Form", "Ввод услуг"))
         self.label.setText(_translate("Form", "Наименование услуги"))
         self.label_2.setText(_translate("Form", "Название документа услуги"))
         self.label_3.setText(_translate("Form", "Дата получения документа"))
@@ -89,7 +89,7 @@ class Ui_Form(object):
         self.label_6.setText(_translate("Form", "Единицы измерения"))
         self.label_7.setText(_translate("Form", "Пени (пока не используется)"))
         self.label_8.setText(_translate("Form", "Дата начисления пени (Не исп.)"))
-        self.pushButton.setText(_translate("Form", "ok"))
-        self.pushButton_2.setText(_translate("Form", "accept"))
-        self.pushButton_3.setText(_translate("Form", "cancel"))
+        self.pushButton.setText(_translate("Form", "Ok"))
+        self.pushButton_2.setText(_translate("Form", "Apply"))
+        self.pushButton_3.setText(_translate("Form", "Cancel"))
 

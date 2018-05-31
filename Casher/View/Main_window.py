@@ -53,8 +53,11 @@ class Ui_MainWindow(object):
         self.action.setObjectName("action")
         self.action_2 = QtWidgets.QAction(MainWindow)
         self.action_2.setObjectName("action_2")
+        self.action_3 = QtWidgets.QAction(MainWindow)
+        self.action_3.setObjectName("action_3")
         self.menu.addAction(self.action)
         self.menu.addAction(self.action_2)
+        self.menu.addAction(self.action_3)
         self.menubar.addAction(self.menu.menuAction())
 
         self.retranslateUi(MainWindow)
@@ -67,4 +70,5 @@ class Ui_MainWindow(object):
         self.menu.setTitle(_translate("MainWindow", "Файл"))
         self.action.setText(_translate("MainWindow", "Платеж предприятия"))
         self.action_2.setText(_translate("MainWindow", "Платеж садовод"))
+        self.action_3.setText(_translate("MainWindow", "Оплата услуг"))
 

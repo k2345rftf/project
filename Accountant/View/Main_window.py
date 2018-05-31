@@ -59,7 +59,14 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
         self.action = QtWidgets.QAction(MainWindow)
         self.action.setObjectName("action")
+        self.action_2 = QtWidgets.QAction(MainWindow)
+        self.action_2.setObjectName("action_2")
+        
+        self.action_3 = QtWidgets.QAction(MainWindow)
+        self.action_3.setObjectName("action_3")
         self.menu.addAction(self.action)
+        self.menu.addAction(self.action_2)
+        self.menu.addAction(self.action_3)
         self.menubar.addAction(self.menu.menuAction())
 
         self.retranslateUi(MainWindow)
@@ -67,8 +74,10 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Бухгалтер"))
         self.menu.setTitle(_translate("MainWindow", "Файл"))
         self.action.setText(_translate("MainWindow", "Ввод услуг/налогов"))
+        self.action_2.setText(_translate("MainWindow", "Оплата взносов/Выдача денежных средств"))
+        self.action_3.setText(_translate("MainWindow", "Оплата услуг/налогов"))
         self.pushButton.setText(_translate("MainWindow", "Показать"))
 

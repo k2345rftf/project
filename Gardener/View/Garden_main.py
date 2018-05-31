@@ -76,10 +76,8 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Садовод"))
         self.menu.setTitle(_translate("MainWindow", "Файл"))
-        # self.choose.setItemText(0, _translate("MainWindow", "Регионы во владении"))
-        # self.choose.setItemText(1, _translate("MainWindow", "История платежей"))
         self.action_2.setText(_translate("MainWindow", "Личный Кабинет"))
         self.action_3.setText(_translate("MainWindow", "Внести показания счетчика"))
         self.enter.setText(_translate("MainWindow", "Показать"))

@@ -2,11 +2,19 @@ from database import create_debug_engine, create_session
 
 
 
-
 class GardenerPayment:
 
 	def __init__(self, id):
 		self.id = id
+
+	def check_serv(self, name_serv):
+		from database import Service
+		self.name_serv = name_serv
+		self.result = session.query(Service.name_service).filter(Service.name_service == self.name_serv)
+		if len(self.result[0])==0:
+			self.err = "Такой улуги нет!!!!!"
+			return self.err
+		return 0
  
 	def user_id(self, name, number_region):
 		from database import User, Share, Region
@@ -116,6 +124,9 @@ class GardenerPayment:
 			self.err = "Такого пользователя нет!!!"
 			return self.err
 		self.name_serv = name_serv
+		self.momo = self.check_serv(self.name_serv)
+		if type(self.momo)==str:
+			return self.momo
 		self.payment = payment
 		self.data = select_obj(Service.cost_unit, Service.name_service, self.name_serv, None, None)
 		if len(self.data)== 0:

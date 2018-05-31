@@ -12,6 +12,8 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(577, 436)
+        Dialog.setMinimumSize(QtCore.QSize(577, 436))
+        Dialog.setMaximumSize(QtCore.QSize(577, 436))
         self.lineEdit = QtWidgets.QLineEdit(Dialog)
         self.lineEdit.setGeometry(QtCore.QRect(40, 40, 113, 25))
         self.lineEdit.setObjectName("lineEdit")

@@ -114,7 +114,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Директор"))
         self.pushButton.setText(_translate("MainWindow", "Показать"))
         self.pushButton1.setText(_translate("MainWindow", "Показать"))
         self.menu.setTitle(_translate("MainWindow", "Файл"))

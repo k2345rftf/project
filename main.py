@@ -135,6 +135,7 @@ class Casher_controller:
         ui.pushButton.pressed.connect(self.button)
         ui.action.triggered.connect(self.comp)
         ui.action_2.triggered.connect(self.payment)
+        ui.action_3.triggered.connect(self.gard)
 
     def line(self):
         return (self.view.ui.dateEdit.text(), self.view.ui.dateEdit_2.text())
@@ -157,10 +158,10 @@ class Casher_controller:
             self.table.setRowCount(self.row)
         else:
             self.table.setRowCount(len(self.b[0]))
-        # self.name = ["Дата платежа","Наименование","Цена за единицу","Цена","платеж","переплата","Итог"]
-        # for j in range(len(self.name)):
+        self.name = ["Дата","ФИО","Наименование услуги","Цена"]
+        for j in range(len(self.name)):
             
-            # self.table.setHorizontalHeaderItem(j,QTableWidgetItem(str(self.name[j])))
+            self.table.setHorizontalHeaderItem(j,QTableWidgetItem(str(self.name[j])))
         for i in range(len(self.b)):
             
             for j in range(len(self.b[i])):
@@ -191,6 +192,9 @@ class Casher_controller:
     def payment(self):
         from Casher.Payment_m import Payment_view
         self.v = Payment_view(self.user_id)
+        self.v.show()
+    def gard(self):
+        self.v = Gardener(self.user_id)
         self.v.show()
 
 
@@ -330,7 +334,7 @@ class Director_Controller:
         else:
 
             self.b= self.parametr(self.text, self.args[0], self.args[1])
-        print(self.b)
+
 
         self.row = 20
         self.cols = 10
@@ -343,7 +347,7 @@ class Director_Controller:
         elif self.text =="История регионов":
             self.name = ["Дата покупки", "Номер участка", "ФИО покупателя", "занимаемая площадь"]
         else:
-            self.name = ["Дата","ФИО покупателя","Наименование услуги","Цена"]
+            self.name = ["Дата","ФИО","Наименование услуги","Цена"]
 
 
 
@@ -457,6 +461,8 @@ class Accountant_controller:
         self.user_id = view.model
 
         ui.action.triggered.connect(self.insert)
+        ui.action_2.triggered.connect(self.cash)
+        ui.action_3.triggered.connect(self.gard)
         ui.comboBox.activated.connect(self.line)
         ui.pushButton.pressed.connect(self.button)
 
@@ -524,22 +530,15 @@ class Accountant_controller:
 
                 self.c = self.api.showCompany(self.date1, self.date2)
         return self.c
+    def cash(self):
+        self.v = Casher(self.user_id)
+        self.v.show()
+
+    def gard(self):
+        self.v = Gardener(self.user_id)
+        self.v.show()
 
 
-
-class HiredWorker(QMainWindow):
-    
-
-    def __init__(self, user_id):
-        self.user_id = user_id
-        super(HiredWorker, self).__init__()
-        self.wind()
-    
-
-    def wind(self):
-        from HiredWorker.View.HiredWorker_main import Ui_MainWindow
-        self.ui = Ui_MainWindow()
-        self.ui.setupUi(self)
 
         
 class Control:
@@ -554,29 +553,26 @@ class Control:
     @classmethod
     def check(self, *args):
         self.event = args
+        print(self.event)
         from Observer import Windows
         self.win = Windows()
         self.login = login()
         if len(self.event) != 0:
             
-            if self.event[0][0] == 0:
+            if self.event[0][0][0] == 0:
                 self.main_window = Gardener(self.event[0][1])
                 self.win.run(self.main_window)
                 
-            elif self.event[0][0] == 1:
+            elif self.event[0][0][0] == 1:
                 self.main_window = Casher(self.event[0][1])
                 self.win.run(self.main_window)
                 
-            elif self.event[0][0] == 2:
+            elif self.event[0][0][0] == 2:
                 self.main_window = Director(self.event[0][1])
                 self.win.run(self.main_window)
             
-            elif self.event[0][0] == 3:
+            elif self.event[0][0][0] == 3:
                 self.main_window = Accountant(self.event[0][1])
-                self.win.run(self.main_window)
-            
-            elif self.event[0][0] == 4:
-                self.main_window = HiredWorker(self.event[0][1])
                 self.win.run(self.main_window)
         else:
             self.win.run(self.login) 
@@ -589,8 +585,6 @@ if __name__ == '__main__':
     de = create_debug_engine(True)
     session = create_session(de)
     app = QApplication(sys.argv)
-    # w = Control.check()
-    w = Casher("1")
-    w.show()
+    w = Control.check()
     session.commit()
     app.exec_()

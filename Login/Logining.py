@@ -18,17 +18,16 @@ class Logining:
 			self.err = "error"
 			return self.err
 		else:
-			self.k = []
 			self.user_id = self.us[0]
-			self.k.append(self.user_id[0])
-			self.k.append(self.privelege(self.user_id))
-			return self.k
+			self.privelege(self.user_id)
+			return self.user_id
 	@classmethod
 	def privelege(self, user_id):
 		from database import User
 		self.user_id = user_id
+		print(self.user_id)
 		self.priv = session.query(User.privelege).filter(User.id == self.user_id[0]).all()
-		return self.priv[0][0]
+		return self.priv[0]
 
 de = create_debug_engine(True)
 session = create_session(de)

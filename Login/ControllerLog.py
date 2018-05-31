@@ -44,7 +44,7 @@ class LoginController(Observe):
         self.password = password
         self.user = Logining.user(self.login, self.password)
         if type(self.user)== str:
-            return "error"
+            return "Такого пользователя нет в системе!!!!!"
         self.event = Logining.privelege(self.user)
         self.update(self.event, self.user[0])
         return self.user
@@ -54,7 +54,7 @@ class LoginController(Observe):
         from main import Control
         self.args = args
         if len(self.args) == 0:
-            self.event = ()
+            self.event = 0
         else:
             self.event = self.args
         self.n = Control().check(self.event)

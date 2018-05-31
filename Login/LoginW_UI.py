@@ -12,8 +12,6 @@ class Login_ui(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(443, 300)
-        Form.setMinimumSize(QtCore.QSize(443, 300))
-        Form.setMaximumSize(QtCore.QSize(443, 300))
         self.password = QtWidgets.QLineEdit(Form)
         self.password.setGeometry(QtCore.QRect(50, 140, 281, 27))
         self.password.setObjectName("password")
