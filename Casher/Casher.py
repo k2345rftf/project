@@ -1,16 +1,33 @@
-from src.database import create_debug_engine, create_session
+from database import create_debug_engine, create_session
 
 
 
 
 class GardenerPayment:
 
-
-
+	def __init__(self, id):
+		self.id = id
+ 
+	def user_id(self, name, number_region):
+		from database import User, Share, Region
+		self.Full_name = name
+		self.numb_region = int(number_region)
+		self.ids = session.query(User.id).filter(User.NFC == self.Full_name).all()
+		self.regs = session.query(Share.user_id).filter(Share.region_id == Region.region_id).filter(Region.number_region == self.numb_region).all()
+		print(self.ids)
+		if len(self.ids)==0:
+			self.err = "Такого пользователя нет!!!"
+			return self.err
+		for self.i in range(len(self.ids)):
+			for self.j in range(len(self.regs)):
+				if self.ids[self.i][0]==self.regs[self.j][0]:
+					self.user_id = int(self.ids[self.i][0])
+					break
+		return self.user_id
 
 
 	def periods(self, name_service):
-		from src.database import Service, select_obj
+		from database import Service, select_obj
 		self.name_service = name_service
 		self.date = select_obj(Service.date, Service.name_service, self.name_service, None, None)
 		if len(self.date) != 0:
@@ -23,8 +40,8 @@ class GardenerPayment:
 
 
 
-	def read_counter(self,user_id, name_serv, norm_value):
-		from src.database import Counter, CounterUnit, select_obj
+	def read_counter(self, user_id, name_serv, norm_value):
+		from database import Counter, CounterUnit, select_obj
 		self.user_id = user_id
 		self.norm_value = norm_value
 		self.name_serv = name_serv
@@ -39,13 +56,16 @@ class GardenerPayment:
 				for self.i in range(2):
 					self.b[self.i].append(self.data[len(self.data)-1 - self.i][0])
 					self.b[self.i].append(self.data[len(self.data)-1 - self.i][1])
+			if len(self.b)==0:
+				return self.norm_value
 					
 
 
 		return self.b
 
 	def recalc_cost(self,user_id, name_serv, norm_value):
-		from src.database import Service, select_obj
+		from database import Service, select_obj
+		import datetime
 		self.norm_value = norm_value
 		self.user_id = user_id
 		self.name_serv = name_serv
@@ -60,7 +80,7 @@ class GardenerPayment:
 		if (type(self.count) == float):
 			self.value = self.count * self.cost
 		else:
-			if (self.periodq - (datetime.datetime.timestamp(self.count[0][0]) - datetime.datetime.timestamp(self.count[1][0]))) == 0:
+			if (self.periodq - (int(datetime.datetime.timestamp(self.count[0][0])) - int(datetime.datetime.timestamp(self.count[1][0])))) == 0:
 				self.value = (self.count[0][1] - self.count[1][1]) * self.cost
 			else:
 				self.r = (datetime.datetime.timestamp(self.count[0][0]) - datetime.datetime.timestamp(self.count[1][0]))
@@ -69,7 +89,7 @@ class GardenerPayment:
 
 
 	def overpayment(self,user_id, payment, name_serv, norm_value):
-		from src.database import Transactions, select_obj
+		from database import Transactions, select_obj
 		self.user_id = user_id
 		self.norm_value = norm_value
 		self.name_serv = name_serv
@@ -85,20 +105,25 @@ class GardenerPayment:
 
 
 
-	def insert_trans(self,user_id, name_serv, payment, norm_value):
-		from src.database import Service, Transactions, select_obj
+	def insert_trans(self, name, number_region, name_serv, payment, norm_value):
+		from database import Service, Transactions, select_obj
 		import datetime
-		self.user_id = user_id
+		self.number_region = number_region
+		self.name = name  
 		self.norm_value = norm_value
+		self.user_id = self.user_id(self.name, self.number_region)
+		if type(self.user_id)==str:
+			self.err = "Такого пользователя нет!!!"
+			return self.err
 		self.name_serv = name_serv
-		self.payment = float(payment.replace(",","."))
+		self.payment = payment
 		self.data = select_obj(Service.cost_unit, Service.name_service, self.name_serv, None, None)
 		if len(self.data)== 0:
 			self.unit = 1
 		else:
 			self.unit = self.data[len(self.data)-1]
-		self.id_transaction = select_obj(Transactions.id_transaction,Transactions.id_user, self.user_id, None, None)
-		if len(self.id_transaction) == 0:
+		self.id_transaction = session.query(Transactions.id_transaction).all()
+		if len(self.id_transaction[0]) == 0:
 			self.id_transaction.append(0)
 		self.cost = self.recalc_cost(self.user_id, self.name_serv, self.norm_value)
 		self.payment = self.payment
@@ -108,7 +133,8 @@ class GardenerPayment:
 
 
 		self.b = Transactions(
-							id_transaction = int(self.id_transaction[len(self.id_transaction)-1]) + 1,
+							id_debet = self.id,
+							id_transaction = int(self.id_transaction[len(self.id_transaction)-1][0]) + 1,
 					        id_user = self.user_id,
 					        date = datetime.datetime.now(),
 					        name_serv = self.name_serv,
@@ -117,7 +143,7 @@ class GardenerPayment:
 					        payment = self.payment,
 					        overpayments = self.overpayments,
 					        total = self.total)
-		return session.add(self.b)
+		return self.b
 
 
 class CompanyPayment:
@@ -127,30 +153,36 @@ class CompanyPayment:
 
 
 
-	def insert_trans(self,user_id, name_serv, payment):
-		from src.database import Company, User, isNone
+	def insert_trans(self,name, name_serv, payment):
+		from database import Company, User, isNone
 		import datetime
-		self.user_id = user_id
+		self.name = name
+		self.user_id = session.query(User.id).filter(User.NFC == self.name).filter(User.privelege > 0).all() 
+		print(len(self.user_id))
+		if len(self.user_id) == 0:
+			self.err = "Такого пользователя не существует."
+			return self.err
 		self.a = session.query(Company.id_transaction).all()
 		if len(self.a) == 0:
 			self.id_tr = -1
 		else:
-			self.id_tr = self.a[len(self.a)-1]
+			self.id_tr = self.a[len(self.a)-1][0]
 
 		
 		
 		self.name_serv = name_serv
-		self.payments = float(payment.replace(",","."))
+		self.payments =payment
 
 
 		self.b = Company(
-						id_transaction = int(self.id_tr+1),
+						id_transaction = (int(self.id_tr)+1),
 					    date = datetime.datetime.now(),
-					    id_creditor = int(self.user_id),
+					    id_creditor = int(self.user_id[0][0]),
 					    name_service = self.name_serv,
 					    cost = self.payments,
 					    id_deb = self.ide)
-		return session.add(self.b)
+		print(type(self.b))
+		return self.b
 
 
 class ShowHistoryPaymentC:
@@ -161,7 +193,7 @@ class ShowHistoryPaymentC:
 		return datetime.datetime(int(self.param[2]), int(self.param[1]), int(self.param[0]))
 
 	def show_all(self):
-		from src.database import Company, User
+		from database import Company, User
 		self.b =[]
 		self.j = 0
 		for self.a in session.query(Company.date,
@@ -176,7 +208,7 @@ class ShowHistoryPaymentC:
 		return self.b
 
 	def show_area(self, date):
-		from src.database import Company, User
+		from database import Company, User
 		self.date = date
 		self.b =[]
 		self.j = 0
@@ -200,26 +232,29 @@ class CasherAPI(ShowHistoryPaymentC, CompanyPayment, GardenerPayment):
 		self.user_id = user_id
 		super().__init__(self.user_id)
 
-	def showHistory(self, date):
-		from src.database import isNone
+	def showHistory(self, *date):
+		from database import isNone
 		self.date = date
-		if isNone(self.date):
+		print(self.date)
+		if len(self.date)!=0:
 			return ShowHistoryPaymentC().show_area(self.date)
 		else:
 			return ShowHistoryPaymentC().show_all()
 
-	def companyPay(self, id, name_serv, payment):
-		self.uid = int(id)
+	def companyPay(self, name, name_serv, payment):
+		self.uid = name 
 		self.name_serv = name_serv
 		self.payment = payment
 		return CompanyPayment(self.user_id).insert_trans(self.uid, self.name_serv, self.payment)
 
-	def gardenerPay(self,uid, name_serv, payment, norm_value):
-		self.uid = uid
+	def gardenerPay(self, id,name, number_region, name_serv, payment, norm_value):
+		self.id = id
+		self.name = name
+		self.number_region = number_region
 		self.name_serv = name_serv
 		self.payment = payment
 		self.norm_value = norm_value
-		return GardenerPayment().insert_trans(self.uid, self.name_serv, self.payment, self.norm_value)
+		return GardenerPayment(self.id).insert_trans(self.name,self.number_region, self.name_serv, self.payment, self.norm_value)
 
 
 de = create_debug_engine(True)

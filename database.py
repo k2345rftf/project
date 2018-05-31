@@ -37,10 +37,9 @@ class User(Base):
     NFC = Column(String)
     membership = Column(Integer)
     privelege = Column(Integer)
-    counter = Column(Integer)
 
 
-    def __init__(self, id, login, password,NFC, membership, privelege, counter):
+    def __init__(self, id, login, password,NFC, membership, privelege):
         self.id = id
 
         self.login = login
@@ -48,18 +47,16 @@ class User(Base):
         self.NFC = NFC
         self.membership = membership
         self.privelege = privelege
-        self.counter = counter
     
 
     def __repr__(self):
-        return "<{}(id = {}, login = {}, password = {}, NFC={}, membership = {}, privelege = {}, counter = {}".format(self.__class__,
+        return "<{}(id = {}, login = {}, password = {}, NFC={}, membership = {}, privelege = {}".format(self.__class__,
                                                                                                                         self.id, 
                                                                                                                         self.login, 
                                                                                                                         self.password, 
                                                                                                                         self.NFC, 
                                                                                                                         self.membership, 
-                                                                                                                        self.privelege,
-                                                                                                                        self.counter)
+                                                                                                                        self.privelege)
 
 
 class CounterUnit(Base):
@@ -71,7 +68,7 @@ class CounterUnit(Base):
     classAccur = Column(Float)
 
 
-    def __init(self, number, user_id, dateUnstCount, typeCounter, classAccur):
+    def __init__(self, number, user_id, dateUnstCount, typeCounter, classAccur):
         self.number = number
         self.user_id = user_id
         self.dateUnstCount = dateUnstCount
@@ -148,6 +145,7 @@ class HistoryRegion(Base):
 																													self.id_seller)
 class Transactions(Base):
     __tablename__ = 'transactions'
+    id_debet = Column(Integer)
     id_transaction = Column(Integer, primary_key = True, autoincrement=True)
     id_user = Column(Integer, ForeignKey("user.id"))
     date = Column(Date)
@@ -159,7 +157,8 @@ class Transactions(Base):
     total = Column(Float)
 
 
-    def __init__(self, id_transaction, id_user, date, name_serv,cost_unit, cost,payment, overpayments, total ):
+    def __init__(self,id_debet, id_transaction, id_user, date, name_serv,cost_unit, cost,payment, overpayments, total ):
+        self.id_debet = id_debet
         self.id_transaction = id_transaction
         self.id_user = id_user
         self.date = date
@@ -170,8 +169,9 @@ class Transactions(Base):
         self.overpayments = overpayments
         self.total = total
     def __repr__(self):
-        return "<{}(id_transaction={}, id_user={}, date={}, name_serv={},cost_unit={}, cost={}, payment={}, overpayments={}, total={}".format(
+        return "<{}(id_debet = {}, id_transaction={}, id_user={}, date={}, name_serv={},cost_unit={}, cost={}, payment={}, overpayments={}, total={}".format(
                                                                                                     self.__class__,
+                                                                                                    self.id_debet,
                                                                                                     self.id_transaction,
                                                                                                     self.id_user,
                                                                                                     self.date,
