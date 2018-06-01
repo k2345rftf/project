@@ -151,10 +151,10 @@ class Gardener_work:
 			return self.err		
 		
 
-class GardenerAPI(ShowUserRegion, ShowHistoryPayment, Gardener_work):
+class GardenerAPI:
 	def __init__(self, user_id):
 		self.user_id = user_id
-		super(GardenerAPI, self).__init__(self.user_id)
+		super(GardenerAPI, self).__init__()
 	def checkCounter(self, name_counter):
 		self.name_counter = name_counter
 		return Gardener_work(self.user_id).CheckCount(self.name_counter)

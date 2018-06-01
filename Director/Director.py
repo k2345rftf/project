@@ -99,7 +99,6 @@ class ShowData:
       self.user_id=-2
     else:
       self.user_id=int(self.user_id)
-    print(self.user_id)
     for self.history in session.query(User.NFC,
                            Transactions.date,
                            Transactions.name_serv,
@@ -108,10 +107,7 @@ class ShowData:
                            Transactions.payment,
                            Transactions.overpayments,
                            Transactions.total).filter(User.id == Transactions.id_user).filter(Transactions.id_user == self.user_id):
-      self.value.append(self.history)
-
-    print("+++++++++++++++++++++++")
-         
+      self.value.append(self.history)         
     return self.value
 
               
@@ -268,7 +264,6 @@ class Share_work:
     if self.checkArea(self.number_region)-self.share < 0:
       self.err = "Регион переполнен, введите меньшее кол-во"
       return self.err
-    print(self.find)
     self.y = []
     for self.i in range(len(self.find)):
       self.y.append(self.find[self.i][0])
@@ -345,7 +340,7 @@ class ShowHistory:
 
 
 
-class ShowDirectorAPI(ShowHistory, ShowData, Companies, Inventories, Debts):
+class ShowDirectorAPI:
   def __init__(self, **kwargs):
     self.kwargs = kwargs
     super(ShowDirectorAPI, self).__init__()
@@ -383,10 +378,10 @@ class ShowDirectorAPI(ShowHistory, ShowData, Companies, Inventories, Debts):
 
 
 
-class InsertDirectorAPI(Share_work, Region_work, NewInventory, NewUser):
+class InsertDirectorAPI:
   def __init__(self, *args):
     self.args = args
-    super().__init__(self.args)
+    super(InsertDirectorAPI, self).__init__()
 
   def insertUser(self, login, password, full_name, membership, privelege):
     self.login = login

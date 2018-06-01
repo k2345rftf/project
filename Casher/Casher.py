@@ -10,9 +10,10 @@ class GardenerPayment:
 	def check_serv(self, name_serv):
 		from database import Service
 		self.name_serv = name_serv
-		self.result = session.query(Service.name_service).filter(Service.name_service == self.name_serv)
-		if len(self.result[0])==0:
-			self.err = "Такой улуги нет!!!!!"
+		self.result = session.query(Service.name_service).filter(Service.name_service == self.name_serv).all()
+
+		if len(self.result)==0:
+			self.err = "Такой уcлуги нет!!!!!"
 			return self.err
 		return 0
  
@@ -237,16 +238,15 @@ class ShowHistoryPaymentC:
 
 
 
-class CasherAPI(ShowHistoryPaymentC, CompanyPayment, GardenerPayment):
+class CasherAPI:
 	
 	def __init__(self, user_id):
 		self.user_id = user_id
-		super().__init__(self.user_id)
+		super(CasherAPI, self).__init__()
 
 	def showHistory(self, *date):
 		from database import isNone
 		self.date = date
-		print(self.date)
 		if len(self.date)!=0:
 			return ShowHistoryPaymentC().show_area(self.date)
 		else:
